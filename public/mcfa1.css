@@ -1,0 +1,86 @@
+/* mcfa1.css - barvit in prijeten styling */
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: #f0f8ff; /* svetlo modro ozadje */
+  color: #333;
+  margin: 0;
+  padding: 20px;
+}
+
+h1, h2, h3 {
+  color: #1a237e; /* temno modri naslovi */
+  margin-bottom: 10px;
+}
+
+nav {
+  background: linear-gradient(90deg, #ff8a65, #ffb74d); /* prijeten gradient */
+  padding: 12px 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 20px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+ul {
+  list-style: none; /* odstranimo bullet-e */
+  padding: 0;
+}
+
+li {
+  background-color: #fff3e0; /* svetlo oranžna kartica */
+  border-left: 6px solid #ff8a65; /* barvna stranica za poudarek */
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* rahla senca */
+}
+
+li h3 {
+  margin: 0 0 8px 0;
+  color: #e65100; /* rdečkasto-oranžni naslovi znotraj kartice */
+}
+
+li p {
+  margin: 0;
+  color: #4e342e; /* temnejša rjava za besedilo */
+  line-height: 1.5;
+}
+#pravila-toolbar button { margin-right:6px; }
+.li-controls { margin-left:8px; }
+.li-controls button { margin-left:4px; }
+
+      /* bootstrap-friendly tab default hidden */
+.tab { display:block; } /* we'll hide with d-none class */
+
+header {
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+  background: #f0f8ff;
+  padding: 20px;
+  top: 0;
+  left: 0;
+}
+
+header .d-flex {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Add spacing for content below fixed header */
+main {
+  margin-top: 100px; /* adjust based on your header height */
+}
+

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCForAdults official website</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="mcfa1.css">
+</head>
+<body>
+  <header>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="mb-0">MCForAdults</h2>
+      <div class="btn-group" role="group" aria-label="Zavihtki">
+        <button type="button" class="btn btn-outline-primary" onclick="openTab('o-nas')">O NAS</button>
+        <button type="button" class="btn btn-outline-primary" onclick="openTab('pravila')">PRAVILA</button>
+        <button type="button" class="btn btn-outline-primary" onclick="openTab('zac-funkcije')">ZAČASNE FUNKCIJE</button>
+      </div>
+    </div>
+  </header>
+    <div id="o-nas" class="tab">
+      <!-- ...existing code... -->
+      <main>
+        <br>
+        <br>
+      <h1>Dobrodošli na spletno stran serverja MCForAdults!</h1>
+      <p>To je uradna spletna stran zelo sproščenega Minecraft serverja z izjemno skupnostjo, ki že leta ob prijetnem druženju ustvarja neverjetna čudesa v Minecraft svetu. </p>
+      <p>Naš cilj je ustvariti varen in prijeten prostor za vse igralce, kjer se lahko sprostijo, zabavajo in povežejo z drugimi ljubitelji Minecrafta.</p>
+      <p>Več vsebine na spletno stran pride kmalu! (ali ne tako kmalu)</p>
+      <p>Zaenkrat uživajte ob prebiranju pravilnika, ki zagotavlja, da se igralci na serverju dobro počutijo.</p>
+      </main>
+    </div>
+
+    <div id="pravila" class="tab d-none">
+      <h1>Pravila</h1>
+
+      <div id="pravila-toolbar" class="mb-3">
+        <button id="editPravilaBtn" class="btn btn-sm btn-outline-secondary">Uredi</button>
+        <button id="savePravilaBtn" class="btn btn-sm btn-primary" style="display:none">Shrani</button>
+        <button id="addPravilaBtn" class="btn btn-sm btn-success">Dodaj člen</button>
+        <button id="resetPravilaBtn" class="btn btn-sm btn-danger">Ponastavi privzeta</button>
+      </div>
+
+      <div id="pravila-content" class="card card-body" aria-live="polite"></div>
+
+      <template id="default-pravila">
+      <ol>
+        <li><h3>Združenje MCFA</h3>Vsak posameznik, ki želi sodelovati v politiki, se mora oglasiti na Capital Islandu, da dobi certifikat in je napisan v seznam. Vsak ki je v seznamu in ima certifikat, lahko sodeluje v politiki, kot na primer glasovanje in volitve. </li>
+        <li><h3>Svet MCFA</h3><p>Sestavljen je iz: Vej123 (Jernej), Lukxxx123 (Luka), Neocan_ (Nejc) in samo oni lahko dodelujejo certifikate za združenje MCFA. (also VeJ123 mora biti razglašen kot najbolj kul model, ki je živel) Poleg dodeljevanja certifikatov ima MCFA Svet možnost VETA (vsaj dokler se vsaj dva člana strinjata, nekaj za kar je potreben posvet). Ta VETO je močnejši od VETA Predsednika. Če predsednika ni, ima svet vse pravice in dolžnosti, ki jih ima sicer presednik. Delo si svetniki porazdelijo po svoji presoji. 
+        </p></li>
+        <li><h3>Predsednik</h3><p>Predsednik je izvoljen na predsedniških volitvah. Mandat Predsednika traja pol leta (6 mesecev), razen če Predsednika izglasuje cel Svet (vsi trije) ali 2/3 Združenja (torej člani Združenja MCFA), oziroma če Predsednik odstopi.
+        Predsednik (ki je izvoljen) ima tudi VETO in njegov glas na volitvah šteje za dva namesto enega. Predsednikov VETO je manj močen kot od Sveta, torej lahko Svet ta VETO negira. Dolžnost Predsednika je organizirati volitve. Te volitve so lahko predlagane s strani drugih članov Združenja MCFA. Tehnikalije v zakonih in zakone, ki se ne tičejo nujno vseh članov serverja in so majhni, lahko predsednik postavi kar sam brez volitev. Mora pa tudi vsako tako spremembo objaviti, in če vsaj 10% Združenja MCFA zahteva volitve za ta zakon, morajo biti te izvedene. Za pomembne zakone (ali zakone po predsednikovi presoji) pa morajo biti obvezno volitve. Zakone lahko predlaga katerikoli član Združenja MCFA, predsednik pa jih je dolžen upoštevati ali narediti volitve, lahko pa tudi uporabi svoj VETO.</p></li>
+        <li><h3>Podpredsednik
+        </h3><p>Predsednik lahko v svojem mandatu za največ 1 mesec preda predsedništvo nekomu, ki ga določi (ni potrebno, da je to neprekinjeno obdobje, lahko stori to tudi večkrat za manj časa). Ta igralec potem postane podpredsednik in ima vse pravice in dolžnosti predsednika, medtem ko jih predsednik izgubi. Predsednik ima le to pravico, da lahko kadarkoli (če še poteka njegov mandat) zahteva to nazaj. To je namenjeno primerom predsednikove odsotnosti ali obremenjenosti v življenju.</p></li>
+        <li><h3>Volitve</h3><p>Volitve so organizirane s strani predsednika, če tega ni pa s strani sveta MCFA.
+        Predsednik ima na volitvah 2 glasova, vsak drug član Združenja MCFA pa le enega. Na predsedniških volitvah ali na volitvah za odstavitev predsednika pa ima čisto vsak (tudi predsednik) le 1 glas. Kandidati na predsedniških volitvah ne morejo glasovati sami zase.</p></li>
+        <li><h3>Visoka in nizka sezona</h3><p>Visoka sezona traja cel julij, avgust in september, nizka pa ves ostali del leta. Pri visoki sezoni morajo biti volitve odprte vsaj 3 dni, pri nizki pa vsaj 1 teden. Prav tako so v nizki sezoni daljše neodzivnosti (do nekaj tednov) igralcev na političnih položajih sprejemljive, v visoki pa ne. Sploh pa je neodzivnost igralcev, če imajo npr. na fakulteti izpitno obdobje ali katerokoli drugo pomembno stvar v življenju, v tem času popolnoma upravičena.</p></li>
+        <li><h3>Upravitelji skupnih lokacij</h3><p>Te so na serverju 3, Capital Island, Nuevo Cadiz in Industrial District. Vsaka ima svojega upravitelja, ki ima v pristojnosti razvoj in skrb za to lokacijo. Upravitelj Capital Islanda je kar predsednik, za ostali dve lokaciji pa se razpišejo volitve. Vsak predsednik ima enkrat na mandat pravico zahtevati, da se razpišejo nove volitve za katero od teh dveh lokacij. Prav tako so upravitelji lahko odstavljeni s strani enoglasnega Sveta MCFA (vseh 3 članov) ali 2/3 Združenja MCFA, lahko pa tudi sami odstopijo. Upravitelji ne smejo rušiti objektov, razen če imaš za to njegovo dovoljenje. Za rušenje ne štejejo manjši popravki ali spremembe na obstoječih objektih, šteje pa, če večino neke stavbe uničiš ali ji povzroči izgubo svojega tedanjega namena. Če se za katero od lokacij ne najde nobenega kandidata za Upravitelja, to odgovornost prevzame predsednik.</p>
+            <ul><li><h4>Upravitelj Industrial Districta</h4><p>Mora obvezno pustiti villager trading hall, saj mora biti ta dostopen vsem igralcem, ki morda svojih vaščanov nimajo. </p></li>
+                <li><h4>Upravitelj Nuevo cadiza</h4>Mora skrbeti, da bo hiša vedno imela vlogo, da se lahko katerikoli igralec naseli vanjo za nedoločen čas in vzema vse iz skrinj.<p>
+        </p></li><li><h4>Upravitelj Capital islanda</h4><p>Ta mora skrbeti, da je tam vedno operativen parlament, predsedniška palača in ostala infrastruktura, pomembna za politiko serverja.</p></li></li></ul></li>
+        <li><h3>Uveljavljanje zakonov</h3><p>Če se nekdo ne drži zakona, dobi najprej opozorilo (lahko tudi več), razen v primeru hujših kršitev, kjer že takoj lahko sledi katerakoli kazen. Če tega ne izpolni, je globa 5 ali 10 diamantov (odvisno od presoje predsednika ali policaja). Če se teh zahtev ne izpolni, se lahko takega igralca izključi iz Združenja MCFA, v primeru zelo hudih kršitev pa sledi bannanje iz serverja (začasno ali permanentno).</p></li>
+        <li><h3>Policija</h3><p>Sestavlja jo 1 član, ki skrbi, da se zakoni izvajajo, kot je treba in da se jih vsi držijo. V primeru kršitev reagira skladno z osmim členom ustave. Za volitve in odstop policaja je enaka politika, kot pri upraviteljih skupnih lokacij. Torej vsak predsednik lahko enkrat na mandat razpiše volitve za policaja.</p></li>
+        <li><h3>Zakon za zaščito vaščanov (ZZZV)</h3><p>Zakon za zaščito vaščanov: 1. vaščanov se ne sme ubijati. 2. vsak vaščan mora imeti na dosegu posteljo in vsaj 9 kock, kamor se lahko premika. Če je več vaščanov v enem prostoru, morajo priti vsaj 3 kocke na vsakega vaščana (št_kock_prostora/št_vaščanov >=3). Druga točka ne velja, kadar gre za avtomatske farme.</p></li>
+        <li><h3>Prepoved uničevanja</h3><p>Vključuje 2 stvari: 1. absolutno prepovedano je uničevati karkoli, kar je kdo drug od igralcev zgradil, razen če imaš za to njegovo dovoljenje. 2. Kdor želi graditi novo bazo, ki je oddaljena več kot 50 kock od kakšne od njegovih prejšnjih baz, mora za to pridobiti dovoljenje predsednika. Zakon je neveljaven po letu 2025. </p></li>
+      </ol>
+      </template>
+    </div>
+
+    <div id="zac-funkcije" class="tab d-none">
+      <!-- ...existing code... -->
+      <h1>Začasne funkcije</h1>
+      <ul>
+          <li><h3>Predsednik</h3><p>Lukxxx123</p></li>
+          <li><h3>Policija</h3><p>Azyxxx123</p></li>
+          <li><h3>Upravitelj Nuevo Cadiza</h3><p>Lukxxx123</p></li>
+          <li><h3>Upravitelj Industrial Districta</h3><p>IamJM123</p></li>
+          <li><h3>Upravitelj Capital Islanda</h3><p>Lukxxx123</p></li>
+      </ul>
+    </div>
+
+<script>
+function openTab(tabId) {
+  document.querySelectorAll('.tab').forEach(tab => tab.classList.add('d-none'));
+  const el = document.getElementById(tabId);
+  if (el) el.classList.remove('d-none');
+}
+
+// privzeto odpri O NAS
+openTab('o-nas');
+
+/* --- logika za urejanje pravil (client-side, persistent v localStorage) --- */
+(function(){
+  const key = 'mcfa_pravila_v1';
+  const contentEl = document.getElementById('pravila-content');
+  const editBtn = document.getElementById('editPravilaBtn');
+  const saveBtn = document.getElementById('savePravilaBtn');
+  const addBtn = document.getElementById('addPravilaBtn');
+  const resetBtn = document.getElementById('resetPravilaBtn');
+  const tpl = document.getElementById('default-pravila');
+
+  let isEditing = false;
+  let textareaEl = null;
+
+  function makeControls() {
+    // odstrani obstoječe kontrolnike
+    Array.from(contentEl.querySelectorAll('.li-controls')).forEach(n => n.remove());
+
+    // dodaj gumb za brisanje vsakemu <li> (le v view modu)
+    Array.from(contentEl.querySelectorAll('li')).forEach(li => {
+      if (!li.querySelector('.li-controls')) {
+        const span = document.createElement('span');
+        span.className = 'li-controls';
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'btn btn-sm btn-danger ms-2';
+        del.textContent = 'Izbriši';
+        del.addEventListener('click', () => { li.remove(); saveToStorage(); });
+        span.appendChild(del);
+        li.appendChild(span);
+      }
+    });
+  }
+
+  function saveToStorage() {
+    localStorage.setItem(key, contentEl.innerHTML);
+  }
+
+  function loadPravila() {
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      contentEl.innerHTML = saved;
+    } else {
+      contentEl.innerHTML = tpl.innerHTML;
+    }
+    makeControls();
+  }
+
+  function enterEditMode() {
+    if (isEditing) return;
+    isEditing = true;
+    // ustvarimo textarea z HTML vsebino
+    textareaEl = document.createElement('textarea');
+    textareaEl.className = 'form-control';
+    textareaEl.style.minHeight = '300px';
+    textareaEl.value = contentEl.innerHTML;
+    contentEl.innerHTML = '';
+    contentEl.appendChild(textareaEl);
+    editBtn.style.display = 'none';
+    saveBtn.style.display = 'inline-block';
+    textareaEl.focus();
+  }
+
+  function exitEditMode(save) {
+    if (!isEditing) return;
+    if (save) {
+      // shrani textarea kot HTML
+      contentEl.innerHTML = textareaEl.value;
+      saveToStorage();
+    } else {
+      // obnovi iz localStorage ali default
+      loadPravila();
+    }
+    textareaEl = null;
+    isEditing = false;
+    saveBtn.style.display = 'none';
+    editBtn.style.display = 'inline-block';
+    makeControls();
+  }
+
+  editBtn.addEventListener('click', () => {
+    enterEditMode();
+  });
+
+  saveBtn.addEventListener('click', () => {
+    exitEditMode(true);
+  });
+
+  addBtn.addEventListener('click', () => {
+    if (isEditing && textareaEl) {
+      // poskušamo vstaviti nov <li> v textarea pred </ol> če obstaja
+      const html = textareaEl.value;
+      if (/<\/ol>/i.test(html)) {
+        textareaEl.value = html.replace(/<\/ol>/i, '<li><h3>Nov člen</h3><p>Vnesi besedilo...</p></li></ol>');
+      } else {
+        // če ni ol, dodamo novo ol z enim členom
+        textareaEl.value = html + '\n<ol><li><h3>Nov člen</h3><p>Vnesi besedilo...</p></li></ol>';
+      }
+      textareaEl.focus();
+    } else {
+      // view mode: dodaj element v DOM
+      let ol = contentEl.querySelector('ol');
+      if (!ol) {
+        ol = document.createElement('ol');
+        contentEl.appendChild(ol);
+      }
+      const li = document.createElement('li');
+      li.innerHTML = '<h3>Nov člen</h3><p>Vnesi besedilo...</p>';
+      ol.appendChild(li);
+      makeControls();
+      saveToStorage();
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    if (confirm('Ponastaviti pravila na privzeta?')) {
+      localStorage.removeItem(key);
+      loadPravila();
+    }
+  });
+
+  // naloži ob zagonu
+  loadPravila();
+
+})();
+</script>
+
+
+<!-- Bootstrap JS bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
