@@ -1,12 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import User from "public/User.js";
+import authRoutes from "./routes/auth.js";  // <- najprej import
 
 dotenv.config();
-
 const app = express();
 app.use(express.json());
+app.use("/auth", authRoutes);
 
 async function connectDB() {
   try {
@@ -26,21 +26,5 @@ app.get('/', (req, res) => {
 });
 
 // zagon strežnika
-const PORT = 3000;
+const PORT = 5500;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-
-app.post("/register", async (req, res) => {
-  const { username, password } = req.body;
-
-  // preveri, če uporabnik že obstaja
-  const existingUser = await User.findOne({ username });
-  if (existingUser) {
-    return res.status(400).json({ error: "Uporabnik že obstaja" });
-  }
-
-  // ustvari novega uporabnika
-  const newUser = new User({ username, password });
-  await newUser.save(); // shrani v bazo
-
-  res.status(201).json({ message: "Uporabnik uspešno registriran!" });
-});
