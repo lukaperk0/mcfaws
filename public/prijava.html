@@ -9,61 +9,48 @@
 </head>
 <body>
   <div class="container mt-5 tab active" style="max-width: 400px;">
-    <h2 class="mb-3 text-center">Prijava</h2>
+    <h2 class="mb-3 text-center">Registracija</h2>
     <input id="uporabniško_ime" type="text" class="form-control mb-2" placeholder="Uporabniško ime">
     <input id="geslo" type="password" class="form-control mb-3" placeholder="Geslo">
-    <button class="btn btn-primary w-100" onclick="login()">Prijava</button>
-    <div class="text-center mt-2"><p>Še nimate računa? </p></div>
-    <button class="btn btn-outline-secondary w-100 mt-1" onclick="openTab('register')">Registracija</button>
-    <p id="login_msg" class="text-center mt-1"></p>
-  </div>
-  <div id="register" class="tab">
-    <div class="container mt-5" style="max-width: 400px;">
-      <h2 class="mb-3 text-center">Registracija</h2>
-      <input id="r_uporabniško_ime" type="text" class="form-control mb-2" placeholder="Uporabniško ime">
-      <input id="r_geslo" type="password" class="form-control mb-3" placeholder="Geslo">
-      <button class="btn btn-primary w-100" onclick="register()">Registracija</button>
-      <div class="text-center mt-2"><p>Že imate račun? </p></div>
-      <button class="btn btn-outline-secondary w-100 mt-1" onclick="openTab('login')">Prijava</button>
-      <p id="register_msg" class="text-center mt-1"></p>
-    </div>
+    <button class="btn btn-primary w-100" onclick="register()">Registracija</button>
+    <p id="sporočilo" class="mt-3 text-center"></p>
   </div>
 
   <script>
-    const baseURL = window.location.origin; // deluje lokalno in na Renderju
-
-    function openTab(tabId) {
-      // najprej skrij vse tab div-e
-      const tabs = document.querySelectorAll('.tab');
-      tabs.forEach(tab => tab.classList.remove('active'));
-
-      // prikaži izbrani tab
-      const selectedTab = document.getElementById(tabId);
-      selectedTab.classList.add('active');
-    }
     async function register() {
-      console.log("Register function called");
-      const username = document.getElementById("r_uporabniško_ime").value;
-      const password = document.getElementById("r_geslo").value;
-      const res = await fetch(`${baseURL}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
-      const data = await res.json();
-      document.getElementById("register_msg").innerText = data.message || data.error;
-    }
-
-    async function login() {
       const username = document.getElementById("uporabniško_ime").value;
       const password = document.getElementById("geslo").value;
-      const res = await fetch(`${baseURL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      });
-      const data = await res.json();
-      document.getElementById("login_msg").innerText = data.message || data.error;
+      const sporočilo = document.getElementById("sporočilo");
+
+      // Preveri, če sta polja izpolnjena
+      if (!username || !password) {
+        sporočilo.textContent = "Vsa polja so obvezna!";
+        sporočilo.style.color = "red";
+        return;
+      }
+
+      try {
+        // Pošlji POST zahtevo na backend
+        const response = await fetch("/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          sporočilo.textContent = data.message;
+          sporočilo.style.color = "green";
+        } else {
+          sporočilo.textContent = data.error;
+          sporočilo.style.color = "red";
+        }
+      } catch (err) {
+        sporočilo.textContent = "Napaka pri povezavi s strežnikom";
+        sporočilo.style.color = "red";
+        console.error(err);
+      }
     }
   </script>
 </body>
