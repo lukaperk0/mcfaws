@@ -90,4 +90,7 @@ main {
 .tab.active {
   display: block; /* ko je aktiven, se pokaže */
 }
-
+button {
+  margin-bottom: 10px; /* razmik pod gumbom */
+  margin-top: 5px;     /* razmik nad gumbom */
+}

@@ -64,3 +64,37 @@ export async function login(req, res) {
     res.status(500).json({ error: "Napaka pri prijavi" });
   }
 }
+export async function getAllUsers(req, res) {
+  try {
+    // Prikaži samo verified uporabnike
+    const users = await User.find({ verified: true }, 'username verified moderator');
+    
+    res.status(200).json({
+      total: users.length,
+      users: users
+    });
+  } catch (err) {
+    console.error("Napaka pri branju uporabnikov:", err);
+    res.status(500).json({ error: "Napaka pri branju uporabnikov" });
+  }
+}
+
+// NOVO: Verificiraj uporabnika (samo za teste)
+export async function verifyUser(req, res) {
+  try {
+    const { username } = req.body;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "Uporabnik ne obstaja" });
+    }
+
+    user.verified = true;
+    await user.save();
+
+    res.status(200).json({ message: `Uporabnik ${username} je verificiran!` });
+  } catch (err) {
+    console.error("Napaka pri verifikaciji:", err);
+    res.status(500).json({ error: "Napaka pri verifikaciji" });
+  }
+}
