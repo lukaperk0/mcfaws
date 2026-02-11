@@ -3,7 +3,7 @@ import mongoose from "mongoose"; // DODAJ TO
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import authRoutes from "./routes/auth.js";
+import appRoutes from "./api/routes/app.js";
 import { connectDB } from "./config/db.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/auth", authRoutes);
+app.use("/app", appRoutes);
 
 // Poveži se z MongoDB
 connectDB();
@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
   res.send("Minecraft info backend is running!");
 });
 
-const PORT = process.env.PORT || 5500; // SPREMENI TUDI TO (za Render)
+const PORT = process.env.PORT || 50000; // SPREMENI TUDI TO (za Render)
 const server = app.listen(PORT, () =>
   console.log(`🚀 Server running on port ${PORT}`)
 );

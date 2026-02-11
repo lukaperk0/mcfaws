@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pravila - MCForAdults</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="mcfa1.css">
+</head>
+<body>
+    <div id="header"></div>
+
+    <main class="container mt-4">
+        <h1>📜 Pravila serverja</h1>
+
+        <!-- Admin panel (samo za moderatorje) -->
+        <div id="admin-panel" style="display: none;">
+            <div class="card mb-4 border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">🛠️ Moderatorski panel</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Dodaj novo pravilo</h6>
+                    <input type="text" id="newRuleTitle" class="form-control mb-2" placeholder="Naslov pravila (npr. Pravilo 1: Ne griefaj)">
+                    <textarea id="newRuleText" class="form-control mb-3" rows="4" placeholder="Besedilo pravila..."></textarea>
+                    <button class="btn btn-success" onclick="createRule()">
+                        <i class="bi bi-plus-circle"></i> Dodaj pravilo
+                    </button>
+                    <p id="admin-message" class="mt-2"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seznam pravil -->
+        <div id="rules-list">
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Nalagam...</span>
+                </div>
+                <p class="mt-2">Nalagam pravila...</p>
+            </div>
+        </div>
+
+        <!-- Modal za urejanje -->
+        <div class="modal fade" id="editModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">✏️ Uredi pravilo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="editRuleId">
+                        <div class="mb-3">
+                            <label for="editRuleTitle" class="form-label">Naslov</label>
+                            <input type="text" id="editRuleTitle" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRuleText" class="form-label">Besedilo</label>
+                            <textarea id="editRuleText" class="form-control" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Prekliči</button>
+                        <button type="button" class="btn btn-primary" onclick="saveEdit()">
+                            💾 Shrani spremembe
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="header.js"></script>
+    <script>
+        let editModal;
+
+        // Preveri, ali je uporabnik moderator
+        function isModerator() {
+            return localStorage.getItem('moderator') === 'true';
+        }
+
+        // Preveri, ali je uporabnik prijavljen
+        function isLoggedIn() {
+            return localStorage.getItem('token') !== null;
+        }
+
+        // Prikaži admin panel, če je moderator
+        if (isModerator()) {
+            document.getElementById('admin-panel').style.display = 'block';
+        }
+
+        // Naloži vsa pravila
+        async function loadRules() {
+            try {
+                const response = await fetch('/app/rules');
+                const data = await response.json();
+
+                const list = document.getElementById('rules-list');
+
+                if (data.total === 0) {
+                    list.innerHTML = `
+                        <div class="alert alert-info">
+                            <strong>ℹ️ Še ni pravil.</strong> 
+                            ${isModerator() ? 'Dodaj prvo pravilo zgoraj!' : 'Preverite kasneje.'}
+                        </div>
+                    `;
+                    return;
+                }
+
+                list.innerHTML = data.rules.map((rule, index) => `
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">${index + 1}. ${escapeHtml(rule.title)}</h5>
+                            <p class="card-text">${escapeHtml(rule.text).replace(/\n/g, '<br>')}</p>
+                            
+                            ${isModerator() ? `
+                                <div class="mt-3 d-flex gap-2">
+                                    <button class="btn btn-sm btn-warning" onclick='openEditModal(${JSON.stringify(rule)})'>
+                                        ✏️ Uredi
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteRule('${rule._id}', '${escapeHtml(rule.title)}')">
+                                        🗑️ Izbriši
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+                document.getElementById('rules-list').innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>❌ Napaka pri nalaganju pravil!</strong><br>
+                        ${err.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Escape HTML za varnost (prepreči XSS napade)
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Ustvari novo pravilo
+        async function createRule() {
+            const title = document.getElementById('newRuleTitle').value.trim();
+            const text = document.getElementById('newRuleText').value.trim();
+            const message = document.getElementById('admin-message');
+
+            // Validacija
+            if (!title || !text) {
+                message.innerHTML = '<span class="text-danger">❌ Izpolni oba polja!</span>';
+                return;
+            }
+
+            if (!isLoggedIn()) {
+                message.innerHTML = '<span class="text-danger">❌ Moraš biti prijavljen!</span>';
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/app/rules', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, text })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    message.innerHTML = `<span class="text-success">✅ ${data.message}</span>`;
+                    document.getElementById('newRuleTitle').value = '';
+                    document.getElementById('newRuleText').value = '';
+                    loadRules(); // Osveži seznam
+                } else {
+                    message.innerHTML = `<span class="text-danger">❌ ${data.error}</span>`;
+                }
+            } catch (err) {
+                message.innerHTML = `<span class="text-danger">❌ Napaka pri povezavi: ${err.message}</span>`;
+            }
+        }
+
+        // Odpri modal za urejanje
+        function openEditModal(rule) {
+            document.getElementById('editRuleId').value = rule._id;
+            document.getElementById('editRuleTitle').value = rule.title;
+            document.getElementById('editRuleText').value = rule.text;
+            
+            editModal = new bootstrap.Modal(document.getElementById('editModal'));
+            editModal.show();
+        }
+
+        // Shrani urejeno pravilo
+        async function saveEdit() {
+            const id = document.getElementById('editRuleId').value;
+            const title = document.getElementById('editRuleTitle').value.trim();
+            const text = document.getElementById('editRuleText').value.trim();
+
+            if (!title || !text) {
+                alert('❌ Oba polja morata biti izpolnjena!');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/app/rules/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, text })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    editModal.hide();
+                    loadRules(); // Osveži seznam
+                    
+                    // Prikaži success sporočilo
+                    const tempAlert = document.createElement('div');
+                    tempAlert.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
+                    tempAlert.style.zIndex = '9999';
+                    tempAlert.innerHTML = `✅ ${data.message}`;
+                    document.body.appendChild(tempAlert);
+                    setTimeout(() => tempAlert.remove(), 3000);
+                } else {
+                    alert(`❌ ${data.error}`);
+                }
+            } catch (err) {
+                alert(`❌ Napaka pri povezavi: ${err.message}`);
+            }
+        }
+
+        // Izbriši pravilo
+        async function deleteRule(id, title) {
+            if (!confirm(`⚠️ Res želiš izbrisati pravilo:\n\n"${title}"\n\nTo dejanje je nepovratno!`)) {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/app/rules/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    loadRules(); // Osveži seznam
+                    
+                    // Prikaži success sporočilo
+                    const tempAlert = document.createElement('div');
+                    tempAlert.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
+                    tempAlert.style.zIndex = '9999';
+                    tempAlert.innerHTML = `✅ ${data.message}`;
+                    document.body.appendChild(tempAlert);
+                    setTimeout(() => tempAlert.remove(), 3000);
+                } else {
+                    alert(`❌ ${data.error}`);
+                }
+            } catch (err) {
+                alert(`❌ Napaka pri povezavi: ${err.message}`);
+            }
+        }
+
+        // Omogoči Enter za dodajanje pravila
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('newRuleText')?.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    createRule();
+                }
+            });
+        });
+
+        // Naloži pravila ob odprtju strani
+        loadRules();
+    </script>
+</body>
+</html>
