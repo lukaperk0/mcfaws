@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import jwt from "jsonwebtoken";
 
 const MAX_USERS = 100; // lahko prilagodiš
 
@@ -23,48 +24,45 @@ export async function register(req, res) {
     const newUser = new User({ username, password });
     await newUser.save();
 
-    res.status(201).json({ message: "Uporabnik uspešno registriran!" });
+    res.status(201).json({ success: true,message: "Uporabnik uspešno registriran!" });
   } catch (err) {
     console.error("Napaka v register kontrolerju:", err);
     res.status(500).json({ error: "Napaka pri registraciji" });
   }
 }
+export const login = async (req, res) => {
+  const { username, password } = req.body;
 
-export async function login(req, res) {
   try {
-    const { username, password } = req.body;
-
-    // 1) Preveri, če sta polja izpolnjena
-    if (!username || !password) {
-      return res.status(400).json({ error: "Vsa polja so obvezna!" });
-    }
-
-    // 2) Najdi uporabnika v bazi
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(401).json({ error: "Napačno uporabniško ime ali geslo" });
+      return res.status(401).json({ message: "Uporabnik ne obstaja" });
     }
 
-    // 3) Preveri geslo (zaenkrat direktna primerjava - NI VARNO!)
-    if (user.password !== password) {
-      return res.status(401).json({ error: "Napačno uporabniško ime ali geslo" });
+    const isMatch = user.password === password; // zaenkrat plain text, kasneje bcrypt
+    if (!isMatch) {
+      return res.status(401).json({ message: "Geslo napačno" });
     }
+    console.log(user._id, user.username);
+    // ustvari JWT token
+    const token = jwt.sign(
+      { id: user._id, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    console.log("Token ustvarjen:", token);
+    
 
-    // 4) Uspešna prijava
-    res.status(200).json({ 
-      message: "Prijava uspešna!",
-      user: {
-        username: user.username,
-        verified: user.verified,
-        moderator: user.moderator
-      }
+    res.json({
+      message: "Prijava uspešna",
+      token,
     });
   } catch (err) {
-    console.error("Napaka v login kontrolerju:", err);
-    res.status(500).json({ error: "Napaka pri prijavi" });
+    console.error(err);
+    res.status(500).json({ message: "Napaka strežnika" });
   }
-  //moram še dopolnit, da se bo preverjalo geslo pravilno (hashirano) in da se bo ustvarjal token za sejo
-}
+};
+
 export async function getAllUsers(req, res) {
   try {
     // Prikaži samo verified uporabnike
@@ -77,5 +75,23 @@ export async function getAllUsers(req, res) {
   } catch (err) {
     console.error("Napaka pri branju uporabnikov:", err);
     res.status(500).json({ error: "Napaka pri branju uporabnikov" });
+  }
+}
+
+export async function fetchUser(req, res) {
+  try {
+    const userId = req.user.id; // pridobi ID iz JWT (middleware)
+    const user = await User.findById(userId, 'username role');  
+    if (!user) {
+      return res.status(404).json({ error: "Uporabnik ni najden" });
+    }
+
+    res.status(200).json({
+      username: user.username,
+      role: user.role
+    });
+  } catch (err) {
+    console.error("Napaka pri branju uporabnika:", err);
+    res.status(500).json({ error: "Napaka pri branju uporabnika" });
   }
 }

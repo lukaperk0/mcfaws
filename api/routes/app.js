@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, getAllUsers } from "../controllers/authController.js";
+import { register, login, getAllUsers, fetchUser } from "../controllers/authController.js";
 import { 
   getAllCountries, 
   getCountryById,
@@ -15,25 +15,30 @@ import {
   updateRule,
   deleteRule
 } from "../controllers/ruleController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 //import { authenticate, requireModerator } from "../middleware/auth.js"; --- za dodati
 
 const router = express.Router();
 
 //========= MIDDLEWARE (za dodati) ==========
 function authenticate(req, res, next) {
-  next();
-  // Implementacija avtentikacije (npr. preverjanje JWT) 
+  authMiddleware(req, res, next);
 }
 
 function requireModerator(req, res, next) {
-  next();
-  // Implementacija preverjanja moderator pravic (npr. na podlagi JWT)
+  const user = req.user;
+  if (user && user.role === "moderator") {
+    next();
+  } else {
+    res.status(403).json({ error: "Ni dovoljenja za dostop" });
+  }
 }
 
 // ========== AUTH ROUTES ==========
 router.post("/auth/register", register);
 router.post("/auth/login", login);
 router.get("/auth/users", getAllUsers);
+router.get("/auth/profile", authenticate, fetchUser); // GET podatke o prijavljenem uporabniku (prijavljeni)
 
 // ========== COUNTRY ROUTES ==========
 router.get("/countries", getAllCountries);                                    // GET vseh držav (public)

@@ -4,8 +4,7 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  verified: { type: Boolean, default: false },
-  moderator: { type: Boolean, default: false },
+  role: { type: String, enum: ["user", "member", "moderator", "admin"], default: "user" },
 });
 
 // model, ki ga uporabimo za shranjevanje v bazo
