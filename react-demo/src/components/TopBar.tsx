@@ -12,7 +12,7 @@ function TopBar() {
                 <div className="btn-group" role="group" aria-label="Zavihtki">
                     <Link to="/" className="btn btn-outline-primary" role="button">O NAS</Link>
                     <Link to="/pravila" className="btn btn-outline-primary" role="button">PRAVILA</Link>
-                    <Link to="/zac-funkcije" className="btn btn-outline-primary" role="button">ZAČASNE FUNKCIJE</Link>
+                    <Link to="/vloge" className="btn btn-outline-primary" role="button">VLOGE</Link>
                     <Link to="/serverid" className="btn btn-outline-primary" role="button">KAKO SE PRIDRUŽITI</Link>
                     <Link to={isLoggedIn? "/profil" :"/prijava"} className="btn btn-outline-primary" role="button">{isLoggedIn ? "PROFIL" : "PRIJAVA"}</Link>
                     <Link to="/clani" className="btn btn-outline-primary" role="button">ČLANI</Link>

@@ -10,21 +10,24 @@ export async function register(req, res) {
     if (!username || !password) {
       return res.status(400).json({ error: "Vsa polja so obvezna!" });
     }
-    /*
-    const userCount = await User.countDocuments();
-    if (userCount >= MAX_USERS) {
-      return res.status(403).json({ error: "Doseženo maksimalno število uporabnikov!" });
-    }
-    */
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ error: "Uporabnik že obstaja" });
     }
 
     const newUser = new User({ username, password });
+    newUser.setPassword(password);
     await newUser.save();
 
-    res.status(201).json({ success: true,message: "Uporabnik uspešno registriran!" });
+    const token = jwt.sign(
+      { id: newUser._id, username: newUser.username },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    console.log("Token ustvarjen:", token);
+
+
+    res.status(201).json({ success: true,message: "Uporabnik uspešno registriran!", token });
   } catch (err) {
     console.error("Napaka v register kontrolerju:", err);
     res.status(500).json({ error: "Napaka pri registraciji" });
@@ -39,7 +42,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Uporabnik ne obstaja" });
     }
 
-    const isMatch = user.password === password; // zaenkrat plain text, kasneje bcrypt
+    const isMatch = user.validatePassword(password); // zaenkrat plain text, kasneje bcrypt
     if (!isMatch) {
       return res.status(401).json({ message: "Geslo napačno" });
     }
@@ -68,6 +71,23 @@ export async function getAllUsers(req, res) {
     // Prikaži samo verified uporabnike
     const users = await User.find({ verified: true }, 'username verified moderator');
     
+    res.status(200).json({
+      total: users.length,
+      users: users
+    });
+  } catch (err) {
+    console.error("Napaka pri branju uporabnikov:", err);
+    res.status(500).json({ error: "Napaka pri branju uporabnikov" });
+  }
+}
+
+export async function getAllUsersSorted(req, res) {
+  try {
+    const users = await User.find().select("username role");
+    const role_order = ['admin', 'moderator', 'member', 'user'];
+    users.sort((a, b) => {
+      return role_order.indexOf(a.role) - role_order.indexOf(b.role);
+    });
     res.status(200).json({
       total: users.length,
       users: users

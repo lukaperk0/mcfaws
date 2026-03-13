@@ -18,7 +18,7 @@ const Profil = () => {
   };
 
   const fetchProfile = async () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     if (!token) {
         setMessage("Uporabnik ni prijavljen");
@@ -31,14 +31,13 @@ const Profil = () => {
             Authorization: `Bearer ${token}` 
         },
         });
-
         const data = await response.json();
 
         if (response.ok) {
         setProfile(data);
         setMessage("");
         } else {
-        setMessage(data.error || "Napaka pri pridobivanju profila");
+        setMessage(data.message ||"Napaka pri pridobivanju profila");
         }
     } catch (err) {
         setMessage("Napaka pri povezavi s strežnikom");

@@ -15,18 +15,44 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
+  const verifyToken = async () => {
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      setIsLoggedIn(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("/auth/verify", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        setIsLoggedIn(true);
+      } else {
+        sessionStorage.removeItem("token");
+        setIsLoggedIn(false);
+      }
+    } catch {
+      sessionStorage.removeItem("token");
+      setIsLoggedIn(false);
+    }
+  };
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) setIsLoggedIn(true);
+    verifyToken();
   }, []);
 
   const login = (token: string) => {
-    localStorage.setItem("token", token);
+    sessionStorage.setItem("token", token);
     setIsLoggedIn(true);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setIsLoggedIn(false);
   };
 

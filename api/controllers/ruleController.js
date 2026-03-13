@@ -3,7 +3,7 @@ import Rule from "../models/Rule.js";
 // Vrni vsa pravila
 export async function getAllRules(req, res) {
   try {
-    const rules = await Rule.find().sort({ _id: 1 }); // Sortiraj po vrstnem redu
+    const rules = await Rule.find().sort({ createdAt: 1 }); // Sortiraj po vrstnem redu
     res.status(200).json({ 
       total: rules.length, 
       rules 

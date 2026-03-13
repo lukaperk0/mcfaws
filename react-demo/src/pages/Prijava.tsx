@@ -29,13 +29,13 @@ const Prijava = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("token", data.token); 
+        sessionStorage.setItem("token", data.token); 
         login(data.token); 
         setMessage(data.message);
         setIsError(false);
         navigate("/profil");
       } else {
-        setMessage(data.error);
+        setMessage(data.error || "Napaka pri prijavi");
         setIsError(true);
       }
     } catch (err) {

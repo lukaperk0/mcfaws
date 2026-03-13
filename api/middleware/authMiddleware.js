@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-function authMiddleware(req, res, next) {
+import User from "../models/User.js";
+function authenticate(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -19,4 +20,33 @@ function authMiddleware(req, res, next) {
 }
 }
 
-export default authMiddleware;
+async function requireModerator(req, res, next) {
+  try{
+    const decoded = req.user
+    const user = await User.findById(decoded.id);
+    if (user && (user.role === "moderator" || user.role === "admin")) {
+      next();
+    } else {
+      res.status(403).json({ error: "Dostop je dovoljen le moderatorjem in adminom." });
+    }
+  } catch (err) {
+    console.error("Napaka pri preverjanju moderatorja:", err);
+    res.status(500).json({ error: "Napaka strežnika" });
+  }
+}
+
+async function requireAdmin(req, res, next) {
+  try{
+    const decoded = req.user
+    const user = await User.findById(decoded.id);
+    if (user && user.role === "admin") {
+      next();
+    } else {
+      res.status(403).json({ error: "Dostop je dovoljen le adminom." });
+    }
+  } catch (err) {
+    console.error("Napaka pri preverjanju administratorja:", err);
+    res.status(500).json({ error: "Napaka strežnika" });
+  }
+}
+export { authenticate, requireModerator, requireAdmin };

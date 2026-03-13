@@ -25,32 +25,11 @@ const Registracija = () => {
         });
         const data = await response.json();
         if (data.success) {
-            setMessage("Registracija uspešna!");
+            setMessage(data.message);
+            sessionStorage.setItem("token", data.token);
+            login(data.token);
             setIsError(false);
-            try {
-              const response = await fetch("/app/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
-              });
-
-              const data = await response.json();
-
-              if (response.ok) {
-                localStorage.setItem("token", data.token); // 👈 shrani token
-                login(data.token); // 👈 posodobi kontekst
-                setMessage(data.message);
-                setIsError(false);
-                navigate("/profil");
-              } else {
-                setMessage(data.error);
-                setIsError(true);
-              }
-            } catch (err) {
-              setMessage("Napaka pri povezavi s strežnikom");
-              setIsError(true);
-              console.error(err);
-            }
+            navigate("/profil");
         } else {
             setMessage("Registracija ni uspela: " + data.message);
             setIsError(true);
