@@ -41,5 +41,5 @@ trgovanje:
 -račun uporabnika
 
 
-
+Neki
 
